@@ -1,4 +1,11 @@
 openapi: 3.0.0
+tags:
+  - name: personal
+    description: user related endpoints
+  - name: admin
+    description: admin related endpoints
+  - name: common
+    description: 'common endpoints, dictionaries etc'
 info:
   title: BYOD
   version: '1.0'
@@ -140,8 +147,6 @@ paths:
   /user:
     get:
       summary: Your GET endpoint
-      tags:
-        - Common
       responses:
         '200':
           description: OK
@@ -158,6 +163,8 @@ paths:
                           $ref: '#/components/schemas/User'
       operationId: get-user
       description: list of users
+      tags:
+        - common
   /workspace-template:
     get:
       summary: Your GET endpoint
@@ -195,6 +202,35 @@ paths:
               $ref: '#/components/schemas/WorkspaceTemplate'
         description: ''
       description: Create workspace template
+      tags:
+        - admin
+  '/workspace-template/{workspace_teamplte_id}':
+    parameters:
+      - schema:
+          type: string
+        name: workspace_teamplte_id
+        in: path
+        required: true
+    delete:
+      summary: ''
+      operationId: delete-workspace-template-workspace_teamplte_id
+      responses:
+        '200':
+          description: OK
+      tags:
+        - admin
+    get:
+      summary: ''
+      operationId: get-workspace-template-workspace_teamplte_id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceTemplate'
+      tags:
+        - admin
 components:
   schemas:
     User:
