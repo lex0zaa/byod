@@ -231,6 +231,37 @@ paths:
                 $ref: '#/components/schemas/WorkspaceTemplate'
       tags:
         - admin
+  '/workspace-template/{workspace_template}/workspace':
+    parameters:
+      - schema:
+          type: string
+        name: workspace_template
+        in: path
+        required: true
+    post:
+      summary: ''
+      operationId: post-workspace-template-workspace_template-workspace
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Workspace'
+      description: create workspace from template
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+  /workspace:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses: {}
+      operationId: get-workspace
+      description: list of all system Workspaces
 components:
   schemas:
     User:
