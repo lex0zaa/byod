@@ -5,61 +5,157 @@ info:
 servers:
   - url: 'http://localhost:3000'
 paths:
-  /:
-    post:
-      summary: Create New User
-      operationId: post-user
+  /me/workspace:
+    get:
+      summary: Your GET endpoint
       responses:
         '200':
-          description: User Created
+          description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-              examples:
-                New User Bob Fellow:
-                  value:
-                    id: 12
-                    firstName: Bob
-                    lastName: Fellow
-                    email: bob.fellow@gmail.com
-                    dateOfBirth: '1996-08-24'
-                    emailVerified: false
-                    createDate: '2020-11-18'
-        '400':
-          description: Missing Required Information
-        '409':
-          description: Email Already Taken
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                firstName:
-                  type: string
-                lastName:
-                  type: string
-                email:
-                  type: string
-                dateOfBirth:
-                  type: string
-                  format: date
-              required:
-                - firstName
-                - lastName
-                - email
-                - dateOfBirth
-            examples:
-              Create User Bob Fellow:
-                value:
-                  firstName: Bob
-                  lastName: Fellow
-                  email: bob.fellow@gmail.com
-                  dateOfBirth: '1996-08-24'
-        description: Post the necessary fields for the API to create a new user.
-      description: Create a new user.
-    parameters: []
+                allOf:
+                  - type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Workspace'
+                  - $ref: '#/components/schemas/List'
+      operationId: get-me-workspace
+      parameters:
+        - schema:
+            type: integer
+          in: query
+          name: limit
+        - schema:
+            type: integer
+          in: query
+          name: offset
+      description: list of available workspaces
+      tags:
+        - personal
+  '/me/workspace/{workspace_id}/tools/':
+    get:
+      summary: Your GET endpoint
+      tags:
+        - personal
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ToolInstance'
+                  - $ref: '#/components/schemas/List'
+      operationId: 'get-me-workspace-:id-tools'
+      description: list of tools available on workspace
+    parameters:
+      - schema:
+          type: string
+        name: workspace_id
+        in: path
+        required: true
+  '/me/workspace/{workspace_id}/tools/{tool_id}':
+    parameters:
+      - schema:
+          type: string
+        name: workspace_id
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: tool_id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - personal
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ToolInstance'
+      operationId: get-me-workspace-workspace_id-tools-tool_id
+      description: Detailed information about tool instance
+  '/me/workspace/{workspace_id}/tools/{tool_id}/start':
+    parameters:
+      - schema:
+          type: string
+        name: workspace_id
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: tool_id
+        in: path
+        required: true
+    post:
+      summary: ''
+      operationId: post-me-workspace-workspace_id-tools-tool_id-start
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ToolInstance'
+      description: start tool
+      tags:
+        - personal
+  '/me/workspace/{workspace_id}/tools/{tool_id}/stop':
+    parameters:
+      - schema:
+          type: string
+        name: workspace_id
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: tool_id
+        in: path
+        required: true
+    post:
+      summary: ''
+      operationId: post-me-workspace-workspace_id-tools-tool_id-stop
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ToolInstance'
+      tags:
+        - personal
+  /user:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/List'
+                  - type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/User'
+      operationId: get-user
+      description: list of users
 components:
   schemas:
     User:
@@ -83,23 +179,53 @@ components:
           type: string
         lastName:
           type: string
-        email:
-          type: string
-          format: email
-        dateOfBirth:
-          type: string
-          format: date
-          example: '1997-10-31'
-        emailVerified:
-          type: boolean
-          description: Set to true if the user's email has been verified.
-        createDate:
-          type: string
-          format: date
-          description: The date that the user was created.
       required:
         - id
         - firstName
         - lastName
-        - email
-        - emailVerified
+    Workspace:
+      title: Workspace
+      type: object
+      properties:
+        id:
+          type: string
+    Tool:
+      title: Tool
+      type: object
+      properties:
+        id:
+          type: string
+    Request:
+      title: Request
+      type: object
+      properties:
+        id:
+          type: string
+    List:
+      title: List
+      type: object
+      properties:
+        limit:
+          type: number
+        total:
+          type: number
+        offset:
+          type: number
+    ToolInstance:
+      title: ToolInstance
+      allOf:
+        - type: object
+          properties:
+            instance:
+              type: object
+              properties:
+                id:
+                  type: string
+                status:
+                  type: string
+                  enum:
+                    - stopped
+                    - ready
+                    - inProgress
+        - $ref: '#/components/schemas/Tool'
+  responses: {}
