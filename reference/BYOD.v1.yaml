@@ -136,10 +136,12 @@ paths:
                 $ref: '#/components/schemas/ToolInstance'
       tags:
         - personal
+      description: stop tool
   /user:
     get:
       summary: Your GET endpoint
-      tags: []
+      tags:
+        - Common
       responses:
         '200':
           description: OK
@@ -156,6 +158,43 @@ paths:
                           $ref: '#/components/schemas/User'
       operationId: get-user
       description: list of users
+  /workspace-template:
+    get:
+      summary: Your GET endpoint
+      tags:
+        - admin
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    properties:
+                      items:
+                        $ref: '#/components/schemas/WorkspaceTemplate'
+                  - $ref: '#/components/schemas/List'
+      operationId: get-workspace-template
+      description: |
+        list of workspace templates
+    post:
+      summary: ''
+      operationId: post-workspace-template
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceTemplate'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkspaceTemplate'
+        description: ''
+      description: Create workspace template
 components:
   schemas:
     User:
@@ -228,4 +267,30 @@ components:
                     - ready
                     - inProgress
         - $ref: '#/components/schemas/Tool'
+    WorkspaceRequest:
+      title: WorkspaceRequest
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+          enum:
+            - pending
+            - approved
+            - declined
+        user:
+          $ref: '#/components/schemas/User'
+        workspace:
+          $ref: '#/components/schemas/Workspace'
+    WorkspaceTemplate:
+      title: WorkspaceTemplate
+      type: object
+      properties:
+        id:
+          type: string
+        tools:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tool'
   responses: {}
