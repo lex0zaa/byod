@@ -6,6 +6,8 @@ tags:
     description: admin related endpoints
   - name: common
     description: 'common endpoints, dictionaries etc'
+  - name: optional
+    description: endpoint which is not nesserary end were added for consistensy
 info:
   title: BYOD
   version: '1.0'
@@ -42,7 +44,7 @@ paths:
       description: list of available workspaces
       tags:
         - personal
-  '/me/workspace/{workspace_id}/tools/':
+  '/me/workspace/{workspace_id}/tools':
     get:
       summary: Your GET endpoint
       tags:
@@ -219,6 +221,8 @@ paths:
           description: OK
       tags:
         - admin
+        - optional
+      description: delete info about workspace template
     get:
       summary: ''
       operationId: get-workspace-template-workspace_teamplte_id
@@ -231,6 +235,8 @@ paths:
                 $ref: '#/components/schemas/WorkspaceTemplate'
       tags:
         - admin
+        - optional
+      description: get full info about workspace template
   '/workspace-template/{workspace_template}/workspace':
     parameters:
       - schema:
@@ -255,13 +261,117 @@ paths:
             schema:
               type: object
               properties: {}
+      tags:
+        - admin
   /workspace:
     get:
       summary: Your GET endpoint
-      tags: []
-      responses: {}
+      tags:
+        - admin
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Workspace'
+                  - $ref: '#/components/schemas/List'
       operationId: get-workspace
       description: list of all system Workspaces
+  '/workspace/{workspace_id}':
+    parameters:
+      - schema:
+          type: string
+        name: workspace_id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - admin
+        - optional
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Workspace'
+      operationId: get-workspace-workspace_id
+      description: Full info about workspace
+    put:
+      summary: ''
+      operationId: put-workspace-workspace_id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Workspace'
+      description: Change workspace
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Workspace'
+        description: ''
+      tags:
+        - admin
+  /role:
+    get:
+      summary: Your GET endpoint
+      tags:
+        - admin
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    properties:
+                      items:
+                        $ref: '#/components/schemas/Role'
+                  - $ref: '#/components/schemas/List'
+      operationId: get-role
+      description: get role list
+      parameters:
+        - schema:
+            type: integer
+          in: query
+          name: limit
+        - schema:
+            type: integer
+          in: query
+          name: offset
+    post:
+      summary: ''
+      operationId: post-role
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+      description: create new role
+      tags:
+        - admin
+        - optional
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Role'
+        description: All fields for role except id
 components:
   schemas:
     User:
@@ -294,6 +404,8 @@ components:
       type: object
       properties:
         id:
+          type: string
+        name:
           type: string
     Tool:
       title: Tool
@@ -360,4 +472,24 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Tool'
+    Role:
+      title: Role
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+    Permission:
+      title: Permission
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
   responses: {}
