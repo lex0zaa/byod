@@ -9,6 +9,7 @@ tags:
   - name: optional
     description: endpoint which is not nesserary end were added for consistensy
 info:
+  description: API
   title: BYOD
   version: '1.0'
 servers:
@@ -29,7 +30,7 @@ paths:
                       items:
                         type: array
                         items:
-                          $ref: '#/components/schemas/Workspace'
+                          $ref: '#/components/schemas/WorkspaceInstance'
                   - $ref: '#/components/schemas/List'
       operationId: get-me-workspace
       parameters:
@@ -41,6 +42,11 @@ paths:
             type: integer
           in: query
           name: offset
+        - schema:
+            type: string
+          in: query
+          name: search
+          description: 'Search string, search by name'
       description: list of available workspaces
       tags:
         - personal
@@ -87,6 +93,7 @@ paths:
       summary: Your GET endpoint
       tags:
         - personal
+        - optional
       responses:
         '200':
           description: OK
@@ -372,6 +379,361 @@ paths:
             schema:
               $ref: '#/components/schemas/Role'
         description: All fields for role except id
+  '/role/{role_id}':
+    parameters:
+      - schema:
+          type: string
+        name: role_id
+        in: path
+        required: true
+    put:
+      summary: ''
+      operationId: put-role-role_id
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Role'
+      description: Change Role
+      tags:
+        - admin
+        - optional
+  /me/resolve-permissions:
+    get:
+      summary: Your GET endpoint
+      tags:
+        - personal
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Permission'
+                  - $ref: '#/components/schemas/List'
+      operationId: get-resolve-permissions
+      description: actual permissions for user
+    parameters: []
+  /permissions:
+    get:
+      summary: Your GET endpoint
+      tags:
+        - admin
+        - optional
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Permission'
+                  - $ref: '#/components/schemas/List'
+      operationId: get-permissions
+      description: Get list of permissions
+    post:
+      summary: ''
+      operationId: post-permissions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Permission'
+      description: create new system permission
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Permission'
+      tags:
+        - admin
+        - optional
+  '/me/workspace/{workspace_id}':
+    parameters:
+      - schema:
+          type: string
+        name: workspace_id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - personal
+        - optional
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Workspace'
+      operationId: get-me-workspace-workspace_id
+      description: Get info about workspace
+  '/me/workspace/{workspace_id}/artifacts':
+    parameters:
+      - schema:
+          type: string
+        name: workspace_id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - personal
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Artifact'
+                  - $ref: '#/components/schemas/List'
+      operationId: get-me-workspace-workspace_id-artifacts
+      description: List of artifacts
+  '/workspace/{workspace_id}/user':
+    parameters:
+      - schema:
+          type: string
+        name: workspace_id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - admin
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    properties:
+                      items:
+                        $ref: '#/components/schemas/User'
+                  - $ref: '#/components/schemas/List'
+      operationId: get-workspace-workspace_id-user
+      description: get user list of workspace
+    post:
+      summary: ''
+      operationId: post-workspace-workspace_id-user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+      description: Add user to workspace
+      tags:
+        - admin
+  '/workspace/{workspace_id}/user/{user_id}':
+    parameters:
+      - schema:
+          type: string
+        name: workspace_id
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: user_id
+        in: path
+        required: true
+    delete:
+      summary: ''
+      operationId: delete-workspace-workspace_id-user-user_id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+      description: Delete user from workspace
+      tags:
+        - admin
+  '/me/workspace/{workspace_id}/user':
+    parameters:
+      - schema:
+          type: string
+        name: workspace_id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - personal
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/User'
+                  - $ref: '#/components/schemas/List'
+      operationId: get-me-workspace-workspace_id-user
+      description: user list of workspace
+    post:
+      summary: ''
+      operationId: post-me-workspace-workspace_id-user
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+      tags:
+        - personal
+      description: Add user to workspace
+  '/me/workspace/{workspace_id}/user/{user_id}':
+    parameters:
+      - schema:
+          type: string
+        name: workspace_id
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: user_id
+        in: path
+        required: true
+    delete:
+      summary: ''
+      operationId: delete-me-workspace-workspace_id-user-user_id
+      responses:
+        '200':
+          description: OK
+      tags:
+        - personal
+      description: Delete user from workspace
+  '/me/workspace/{workspace_id}/request':
+    parameters:
+      - schema:
+          type: string
+        name: workspace_id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - personal
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: ''
+                  - $ref: '#/components/schemas/List'
+      operationId: get-me-workspace-workspace_id-request
+      description: Return list of reuqest
+    post:
+      summary: ''
+      operationId: post-me-workspace-workspace_id-request
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+      description: Create request
+      tags:
+        - personal
+  '/me/workspace/{workspace_id}/request/{request_id}/approve':
+    parameters:
+      - schema:
+          type: string
+        name: workspace_id
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: request_id
+        in: path
+        required: true
+    post:
+      description: approve the request
+      summary: ''
+      operationId: post-me-workspace-workspace_id-request-request_id-approve
+      responses:
+        '200':
+          description: OK
+      tags:
+        - personal
+  '/me/workspace/{workspace_id}/request/{request_id}/decline':
+    parameters:
+      - schema:
+          type: string
+        name: workspace_id
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: request_id
+        in: path
+        required: true
+    post:
+      summary: ''
+      operationId: post-me-workspace-workspace_id-request-request_id-decline
+      responses:
+        '200':
+          description: OK
+      tags:
+        - personal
+      description: Decline the request
 components:
   schemas:
     User:
@@ -395,6 +757,8 @@ components:
           type: string
         lastName:
           type: string
+        email:
+          type: string
       required:
         - id
         - firstName
@@ -407,11 +771,28 @@ components:
           type: string
         name:
           type: string
+        updated:
+          type: string
+          format: date
+        owners:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        description:
+          type: string
     Tool:
       title: Tool
       type: object
       properties:
         id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        url:
+          type: string
+        logoUrl:
           type: string
     Request:
       title: Request
@@ -445,6 +826,10 @@ components:
                     - stopped
                     - ready
                     - inProgress
+                    - error
+              required:
+                - id
+                - status
         - $ref: '#/components/schemas/Tool'
     WorkspaceRequest:
       title: WorkspaceRequest
@@ -482,6 +867,10 @@ components:
           type: string
         description:
           type: string
+        permissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Permission'
     Permission:
       title: Permission
       type: object
@@ -492,4 +881,36 @@ components:
           type: string
         description:
           type: string
+    WorkspaceInstance:
+      title: WorkspaceInstance
+      type: object
+      properties:
+        id:
+          type: string
+        workspace:
+          $ref: '#/components/schemas/Workspace'
+        isFavorite:
+          type: boolean
+    Artifact:
+      title: Artifact
+      type: object
+      properties:
+        id:
+          type: string
+        url:
+          type: string
+          format: url
+        name:
+          type: string
+        size:
+          type: string
+        date:
+          type: string
+          format: date-time
+    SuccessResponse:
+      title: SuccessResponse
+      type: object
+      properties:
+        success:
+          type: boolean
   responses: {}
