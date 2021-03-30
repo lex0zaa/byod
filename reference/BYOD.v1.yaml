@@ -1,5 +1,11 @@
 openapi: 3.0.0
 tags:
+  - name: v1
+    description: v1
+  - name: v2
+    description: v2
+  - name: v3
+    description: v3
   - name: personal
     description: user related endpoints
   - name: admin
@@ -50,11 +56,13 @@ paths:
       description: list of available workspaces
       tags:
         - personal
+        - v1
   '/me/workspace/{workspace_id}/tools':
     get:
       summary: Your GET endpoint
       tags:
         - personal
+        - v1
       responses:
         '200':
           description: OK
@@ -92,8 +100,9 @@ paths:
     get:
       summary: Your GET endpoint
       tags:
-        - personal
         - optional
+        - personal
+        - v1
       responses:
         '200':
           description: OK
@@ -128,6 +137,7 @@ paths:
       description: start tool
       tags:
         - personal
+        - v1
   '/me/workspace/{workspace_id}/tools/{tool_id}/stop':
     parameters:
       - schema:
@@ -152,6 +162,7 @@ paths:
                 $ref: '#/components/schemas/ToolInstance'
       tags:
         - personal
+        - v1
       description: stop tool
   /user:
     get:
@@ -174,11 +185,13 @@ paths:
       description: list of users
       tags:
         - common
+        - v3
   /workspace-template:
     get:
       summary: Your GET endpoint
       tags:
         - admin
+        - v3
       responses:
         '200':
           description: OK
@@ -229,6 +242,7 @@ paths:
       tags:
         - admin
         - optional
+        - v3
       description: delete info about workspace template
     get:
       summary: ''
@@ -243,6 +257,7 @@ paths:
       tags:
         - admin
         - optional
+        - v3
       description: get full info about workspace template
   '/workspace-template/{workspace_template}/workspace':
     parameters:
@@ -270,11 +285,13 @@ paths:
               properties: {}
       tags:
         - admin
+        - v3
   /workspace:
     get:
       summary: Your GET endpoint
       tags:
         - admin
+        - v3
       responses:
         '200':
           description: OK
@@ -303,6 +320,7 @@ paths:
       tags:
         - admin
         - optional
+        - v3
       responses:
         '200':
           description: OK
@@ -331,6 +349,7 @@ paths:
         description: ''
       tags:
         - admin
+        - v3
   /role:
     get:
       summary: Your GET endpoint
@@ -401,11 +420,13 @@ paths:
       tags:
         - admin
         - optional
+        - v3
   /me/resolve-permissions:
     get:
       summary: Your GET endpoint
       tags:
         - personal
+        - v2
       responses:
         '200':
           description: OK
@@ -429,6 +450,7 @@ paths:
       tags:
         - admin
         - optional
+        - v3
       responses:
         '200':
           description: OK
@@ -474,8 +496,9 @@ paths:
     get:
       summary: Your GET endpoint
       tags:
-        - personal
         - optional
+        - personal
+        - v1
       responses:
         '200':
           description: OK
@@ -496,6 +519,7 @@ paths:
       summary: Your GET endpoint
       tags:
         - personal
+        - v2
       responses:
         '200':
           description: OK
@@ -523,6 +547,7 @@ paths:
       summary: Your GET endpoint
       tags:
         - admin
+        - v3
       responses:
         '200':
           description: OK
@@ -583,6 +608,7 @@ paths:
       description: Delete user from workspace
       tags:
         - admin
+        - v3
   '/me/workspace/{workspace_id}/user':
     parameters:
       - schema:
@@ -594,6 +620,7 @@ paths:
       summary: Your GET endpoint
       tags:
         - personal
+        - v2
       responses:
         '200':
           description: OK
@@ -626,6 +653,7 @@ paths:
                   type: string
       tags:
         - personal
+        - v2
       description: Add user to workspace
   '/me/workspace/{workspace_id}/user/{user_id}':
     parameters:
@@ -647,6 +675,7 @@ paths:
           description: OK
       tags:
         - personal
+        - v2
       description: Delete user from workspace
   '/me/workspace/{workspace_id}/request':
     parameters:
@@ -659,6 +688,7 @@ paths:
       summary: Your GET endpoint
       tags:
         - personal
+        - v2
       responses:
         '200':
           description: OK
@@ -713,6 +743,7 @@ paths:
           description: OK
       tags:
         - personal
+        - v2
   '/me/workspace/{workspace_id}/request/{request_id}/decline':
     parameters:
       - schema:
@@ -733,7 +764,22 @@ paths:
           description: OK
       tags:
         - personal
+        - v2
       description: Decline the request
+  /me/profile:
+    get:
+      summary: Your GET endpoint
+      tags:
+        - personal
+        - v1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+      operationId: get-me-profile
 components:
   schemas:
     User:
