@@ -36,7 +36,7 @@ paths:
                       items:
                         type: array
                         items:
-                          $ref: '#/components/schemas/WorkspaceInstance'
+                          $ref: '#/components/schemas/Workspace'
                   - $ref: '#/components/schemas/List'
       operationId: get-me-workspace
       parameters:
@@ -44,10 +44,12 @@ paths:
             type: integer
           in: query
           name: limit
+          required: true
         - schema:
             type: integer
           in: query
           name: offset
+          required: true
         - schema:
             type: string
           in: query
@@ -77,8 +79,36 @@ paths:
                         items:
                           $ref: '#/components/schemas/ToolInstance'
                   - $ref: '#/components/schemas/List'
+              examples:
+                example-1:
+                  value:
+                    items:
+                      - instance:
+                          id: string
+                          status: starting
+                          url: string
+                        id: string
+                        name: string
+                        description: string
+                        url: string
+                        type: openrefine
+                        logoUrl: string
+                    limit: 0
+                    total: 0
+                    offset: 0
       operationId: 'get-me-workspace-:id-tools'
       description: list of tools available on workspace
+      parameters:
+        - schema:
+            type: number
+          in: query
+          name: limit
+          required: true
+        - schema:
+            type: number
+          in: query
+          name: offset
+          required: true
     parameters:
       - schema:
           type: string
@@ -809,6 +839,7 @@ components:
         - id
         - firstName
         - lastName
+        - email
     Workspace:
       title: Workspace
       type: object
@@ -826,6 +857,15 @@ components:
             $ref: '#/components/schemas/User'
         description:
           type: string
+        isFavorite:
+          type: boolean
+      required:
+        - id
+        - name
+        - updated
+        - owners
+        - description
+        - isFavorite
     Tool:
       title: Tool
       type: object
@@ -838,14 +878,24 @@ components:
           type: string
         url:
           type: string
-        logoUrl:
+        type:
           type: string
+          enum:
+            - openrefine
+      required:
+        - id
+        - name
+        - description
+        - url
+        - type
     Request:
       title: Request
       type: object
       properties:
         id:
           type: string
+      required:
+        - id
     List:
       title: List
       type: object
@@ -856,6 +906,10 @@ components:
           type: number
         offset:
           type: number
+      required:
+        - limit
+        - total
+        - offset
     ToolInstance:
       title: ToolInstance
       allOf:
@@ -863,19 +917,21 @@ components:
           properties:
             instance:
               type: object
+              required:
+                - id
+                - status
+                - url
               properties:
                 id:
                   type: string
                 status:
                   type: string
                   enum:
-                    - stopped
-                    - ready
-                    - inProgress
+                    - running
+                    - starting
                     - error
-              required:
-                - id
-                - status
+                url:
+                  type: string
         - $ref: '#/components/schemas/Tool'
     WorkspaceRequest:
       title: WorkspaceRequest
@@ -893,6 +949,11 @@ components:
           $ref: '#/components/schemas/User'
         workspace:
           $ref: '#/components/schemas/Workspace'
+      required:
+        - id
+        - status
+        - user
+        - workspace
     WorkspaceTemplate:
       title: WorkspaceTemplate
       type: object
@@ -903,6 +964,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Tool'
+      required:
+        - id
+        - tools
     Role:
       title: Role
       type: object
@@ -917,6 +981,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Permission'
+      required:
+        - id
+        - name
+        - description
+        - permissions
     Permission:
       title: Permission
       type: object
@@ -927,6 +996,10 @@ components:
           type: string
         description:
           type: string
+      required:
+        - id
+        - name
+        - description
     WorkspaceInstance:
       title: WorkspaceInstance
       type: object
@@ -937,6 +1010,10 @@ components:
           $ref: '#/components/schemas/Workspace'
         isFavorite:
           type: boolean
+      required:
+        - id
+        - workspace
+        - isFavorite
     Artifact:
       title: Artifact
       type: object
@@ -953,10 +1030,18 @@ components:
         date:
           type: string
           format: date-time
+      required:
+        - id
+        - url
+        - name
+        - size
+        - date
     SuccessResponse:
       title: SuccessResponse
       type: object
       properties:
         success:
           type: boolean
+      required:
+        - success
   responses: {}
